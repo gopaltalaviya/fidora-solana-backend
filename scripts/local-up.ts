@@ -16,6 +16,9 @@
  * that needs no model: verify-solana, the x402 smoke, the x402 attacks and
  * the sweep check (devnet test keys saved, then handed back).
  *
+ * `DEMO_HOLD=1 npm run demo:local` keeps the validator running after the
+ * demo, so fidora-solana-interface can read the agents and jobs it left.
+ *
  * A fresh ledger matters: agent ids start at 1, which is what the
  * recordings were made with. Ends with "Demo passed." and exit code 0.
  */
@@ -122,6 +125,12 @@ try {
     console.log('\nAll live checks passed.');
   } else {
     step('the demo (cached models: no key, no quota)', 'npx', ['tsx', 'scripts/demo.ts', ...process.argv.slice(2)], {env: {AGENT_MODE: process.env.AGENT_MODE || 'cached'}});
+    if (process.env.DEMO_HOLD === '1') {
+      // Keep the chain up so the interface can read what the demo left on it.
+      console.log(`
+▸ holding the validator at ${RPC} (DEMO_HOLD=1). Interface: FIDORA_CLUSTER=localnet pnpm dev. Ctrl-C stops it.`);
+      await new Promise(() => {});
+    }
   }
 } finally {
   stopValidator();

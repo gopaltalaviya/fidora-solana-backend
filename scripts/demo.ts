@@ -44,6 +44,14 @@ const GOAL = process.argv.slice(2).join(' ').trim() || 'Research SOL/USDC liquid
 
 let failures = 0;
 const ok = (m: string) => console.log(`  ✓ ${m}`);
+/**
+ * A worker's on-chain card URI. The fragment carries its public name,
+ * capability and price so a read-only site can show them from the chain alone
+ * even when the card server (a local port) is offline. HTTP never sends a
+ * fragment, so the card fetch in discovery is unchanged.
+ */
+const cardUri = (port: number, name: string, capability: string, price: bigint) =>
+  `http://127.0.0.1:${port}/agent.json#${new URLSearchParams({n: name, c: capability, p: price.toString()})}`;
 const fail = (m: string) => {
   console.error(`  ✗ ${m}`);
   failures++;
@@ -145,7 +153,7 @@ try {
   for (const w of WORKERS) {
     const keys = await newAgentKeys(c, deployer, 20_000_000n);
     const port = await freePort();
-    const id = await registerAgent(c, p, keys.owner, keys.wallet, `http://127.0.0.1:${port}/agent.json`);
+    const id = await registerAgent(c, p, keys.owner, keys.wallet, cardUri(port, w.name, w.capability, w.price));
     await deposit(c, p, 'stake', keys.owner, id, 11_000_000n);
     running.push(
       await startWorker(
@@ -185,7 +193,7 @@ try {
   // ── a payment whose work fails: refunded inside the x402 request ───────
   const flakyKeys = await newAgentKeys(c, deployer, 20_000_000n);
   const flakyPort = await freePort();
-  const flakyId = await registerAgent(c, p, flakyKeys.owner, flakyKeys.wallet, `http://127.0.0.1:${flakyPort}/agent.json`);
+  const flakyId = await registerAgent(c, p, flakyKeys.owner, flakyKeys.wallet, cardUri(flakyPort, 'FlakyResearch', 'flaky-research', 20_000n));
   await deposit(c, p, 'stake', flakyKeys.owner, flakyId, 11_000_000n);
   const downBrain: Brain = {
     name: 'down',
@@ -208,7 +216,7 @@ try {
     // A farm: its owner funds a puppet client, which pays it once — a bought review.
     const farmKeys = await newAgentKeys(c, deployer, 30_000_000n);
     const farmPort = await freePort();
-    const farmId = await registerAgent(c, p, farmKeys.owner, farmKeys.wallet, `http://127.0.0.1:${farmPort}/agent.json`);
+    const farmId = await registerAgent(c, p, farmKeys.owner, farmKeys.wallet, cardUri(farmPort, 'CheapResearch', 'market-research', 20_000n));
     await deposit(c, p, 'stake', farmKeys.owner, farmId, 11_000_000n);
     running.push(await startWorker({cluster: c, program: p, facilitatorUrl, agentId: farmId, wallet: farmKeys.wallet, name: 'CheapResearch', capability: 'market-research', role: WORKERS[0]!.role, output: WORKERS[0]!.output as never, price: 20_000n, brain: workerBrain}, farmPort));
     const puppetKeys = await newAgentKeys(c, deployer, 0n);
@@ -234,7 +242,7 @@ try {
 
     const priceyKeys = await newAgentKeys(c, deployer, 30_000_000n);
     const priceyPort = await freePort();
-    const priceyId = await registerAgent(c, p, priceyKeys.owner, priceyKeys.wallet, `http://127.0.0.1:${priceyPort}/agent.json`);
+    const priceyId = await registerAgent(c, p, priceyKeys.owner, priceyKeys.wallet, cardUri(priceyPort, 'PremiumResearch', 'premium-research', 1_500_000n));
     await deposit(c, p, 'stake', priceyKeys.owner, priceyId, 11_000_000n);
     running.push(await startWorker({cluster: c, program: p, facilitatorUrl, agentId: priceyId, wallet: priceyKeys.wallet, name: 'PremiumResearch', capability: 'premium-research', role: WORKERS[0]!.role, output: WORKERS[0]!.output as never, price: 1_500_000n, brain: workerBrain}, priceyPort));
     const pricey = await orchestrator.hire('premium-research', {pair: 'SOL/USDC'}, (await orchestrator.discover()).find((x) => x.agentId === priceyId)!);

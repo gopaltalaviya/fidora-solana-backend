@@ -34,6 +34,11 @@ npm ci
 npm run demo:local
 ```
 
+To look at what the demo left on chain in the web interface, keep the chain
+running: `DEMO_HOLD=1 npm run demo:local`, then in
+[fidora-solana-interface](https://github.com/gopaltalaviya/fidora-solana-interface)
+run `FIDORA_CLUSTER=localnet pnpm dev`.
+
 What it does:
 1. Starts a **fresh** `solana-test-validator` with the committed program,
    after checking its hash.
@@ -158,7 +163,7 @@ foreign-instruction check, turns the matching test red.
   end; `npm run sweep:devnet` does it by hand.
 - **Aurora Intents:** needs an Aurora Client Portal API key and mainnet
   funds (there is no testnet), so it is not integrated.
-- **No web interface for Fidora:** the demo is the terminal run above.
+- **The web interface is read-only:** it shows agents, jobs, trust verdicts and the event feed from the chain; registering and hiring are done by agents with their own keys, as above.
 - **Agent wallets are keypairs in the agent process here.** Pactora's
   separate signer service is not ported.
 
