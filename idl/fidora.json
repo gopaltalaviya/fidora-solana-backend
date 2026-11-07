@@ -1,0 +1,3174 @@
+{
+  "address": "VkxrZbgyAXRn5mAAy5SscctDRmMp2AVsmvmsiPD5Uku",
+  "metadata": {
+    "name": "fidora",
+    "version": "1.0.0",
+    "spec": "0.1.0",
+    "description": "Fidora on Solana: escrow, bonds, reputation and spend caps for AI agents that hire each other",
+    "repository": "https://github.com/gopaltalaviya/fidora-solana-programs"
+  },
+  "instructions": [
+    {
+      "name": "accept_job",
+      "docs": [
+        "Worker accepts and locks its bond. Allowed while paused: it is not a",
+        "new hire. Only that the unlocked stake covers the bond is re-checked."
+      ],
+      "discriminator": [
+        43,
+        201,
+        124,
+        1,
+        19,
+        189,
+        96,
+        10
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true
+        },
+        {
+          "name": "job",
+          "writable": true
+        },
+        {
+          "name": "client",
+          "writable": true
+        },
+        {
+          "name": "worker",
+          "writable": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "accept_owner",
+      "discriminator": [
+        176,
+        23,
+        41,
+        28,
+        23,
+        111,
+        8,
+        4
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "accept_wallet",
+      "docs": [
+        "The pending wallet accepts, proving the key agrees to act for the agent."
+      ],
+      "discriminator": [
+        127,
+        218,
+        141,
+        52,
+        39,
+        51,
+        234,
+        76
+      ],
+      "accounts": [
+        {
+          "name": "wallet",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "agent",
+          "writable": true
+        },
+        {
+          "name": "index",
+          "writable": true
+        },
+        {
+          "name": "previous_index",
+          "docs": [
+            "The previous wallet's index, when the agent is rotating its wallet."
+          ],
+          "writable": true,
+          "optional": true
+        },
+        {
+          "name": "system_program"
+        }
+      ],
+      "args": [
+        {
+          "name": "agent_id",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "approve",
+      "docs": [
+        "Client accepts the work. No deadline: it works after the review window",
+        "too, until someone calls `auto_approve`."
+      ],
+      "discriminator": [
+        69,
+        74,
+        217,
+        36,
+        115,
+        117,
+        97,
+        76
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true
+        },
+        {
+          "name": "job",
+          "writable": true
+        },
+        {
+          "name": "client",
+          "writable": true
+        },
+        {
+          "name": "worker",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "review_hash",
+          "type": {
+            "option": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "auto_approve",
+      "docs": [
+        "The client stayed silent through the review window: the worker is paid."
+      ],
+      "discriminator": [
+        36,
+        58,
+        85,
+        199,
+        138,
+        197,
+        222,
+        178
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true
+        },
+        {
+          "name": "job",
+          "writable": true
+        },
+        {
+          "name": "client",
+          "writable": true
+        },
+        {
+          "name": "worker",
+          "writable": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "cancel",
+      "docs": [
+        "Client withdraws an offer nobody accepted — even after the deadline."
+      ],
+      "discriminator": [
+        232,
+        219,
+        223,
+        41,
+        219,
+        236,
+        220,
+        190
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true
+        },
+        {
+          "name": "job",
+          "writable": true
+        },
+        {
+          "name": "client",
+          "writable": true
+        },
+        {
+          "name": "worker",
+          "writable": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "cancel_unstake",
+      "discriminator": [
+        64,
+        65,
+        53,
+        227,
+        125,
+        153,
+        3,
+        167
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "signer": true
+        },
+        {
+          "name": "config"
+        },
+        {
+          "name": "agent",
+          "writable": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "claim_fees",
+      "docs": [
+        "Anyone may push accumulated fees to the fee recipient's token account."
+      ],
+      "discriminator": [
+        82,
+        251,
+        233,
+        156,
+        12,
+        52,
+        184,
+        202
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true
+        },
+        {
+          "name": "to",
+          "writable": true
+        },
+        {
+          "name": "vault",
+          "writable": true
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "token_program"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "complete_unstake",
+      "docs": [
+        "Pays matured stake to the owner's own token account. It never passes",
+        "through the agent's balance, which the agent key could spend."
+      ],
+      "discriminator": [
+        79,
+        98,
+        40,
+        241,
+        100,
+        30,
+        25,
+        234
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true
+        },
+        {
+          "name": "agent",
+          "writable": true
+        },
+        {
+          "name": "to",
+          "writable": true
+        },
+        {
+          "name": "vault",
+          "writable": true
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "token_program"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "create_job",
+      "docs": [
+        "Client hires worker; `amount` moves from the client's balance into",
+        "escrow, under the client's caps. The client's wallet signs and pays",
+        "the job account's rent."
+      ],
+      "discriminator": [
+        178,
+        130,
+        217,
+        110,
+        100,
+        27,
+        82,
+        119
+      ],
+      "accounts": [
+        {
+          "name": "wallet",
+          "docs": [
+            "The client agent's wallet: signs, and pays the job account's rent."
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true
+        },
+        {
+          "name": "client",
+          "writable": true
+        },
+        {
+          "name": "worker"
+        },
+        {
+          "name": "job",
+          "writable": true
+        },
+        {
+          "name": "system_program"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        },
+        {
+          "name": "spec_hash",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "accept_window",
+          "type": "u64"
+        },
+        {
+          "name": "work_window",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "decline_job",
+      "docs": [
+        "The worker refuses an offer it has not accepted: the client is refunded",
+        "at once, and no bond is touched (it was never locked). This is the x402",
+        "`cancel` leg of Fidora's escrow scheme: a paid call whose handler fails",
+        "is declined, so the payer gets its money back in the same request."
+      ],
+      "discriminator": [
+        193,
+        204,
+        130,
+        143,
+        145,
+        17,
+        115,
+        82
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true
+        },
+        {
+          "name": "job",
+          "writable": true
+        },
+        {
+          "name": "client",
+          "writable": true
+        },
+        {
+          "name": "worker",
+          "writable": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "direct_pay",
+      "docs": [
+        "Small, instant payment with no escrow window, for trusted workers."
+      ],
+      "discriminator": [
+        11,
+        101,
+        61,
+        114,
+        142,
+        27,
+        83,
+        12
+      ],
+      "accounts": [
+        {
+          "name": "wallet",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true
+        },
+        {
+          "name": "client",
+          "writable": true
+        },
+        {
+          "name": "worker",
+          "writable": true
+        },
+        {
+          "name": "job",
+          "writable": true
+        },
+        {
+          "name": "system_program"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        },
+        {
+          "name": "spec_hash",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "dispute",
+      "docs": [
+        "Client disputes inside the review window, paying the dispute bond from",
+        "its balance under its caps."
+      ],
+      "discriminator": [
+        216,
+        92,
+        128,
+        146,
+        202,
+        85,
+        135,
+        73
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true
+        },
+        {
+          "name": "job",
+          "writable": true
+        },
+        {
+          "name": "client",
+          "writable": true
+        },
+        {
+          "name": "worker",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "reason_hash",
+          "type": {
+            "option": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "expire_dispute",
+      "docs": [
+        "The arbiter never ruled: the worker is paid, the client's bond comes",
+        "back, nobody is rated."
+      ],
+      "discriminator": [
+        241,
+        116,
+        178,
+        182,
+        234,
+        173,
+        61,
+        120
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true
+        },
+        {
+          "name": "job",
+          "writable": true
+        },
+        {
+          "name": "client",
+          "writable": true
+        },
+        {
+          "name": "worker",
+          "writable": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "expire_unaccepted",
+      "discriminator": [
+        211,
+        109,
+        208,
+        141,
+        40,
+        54,
+        244,
+        2
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true
+        },
+        {
+          "name": "job",
+          "writable": true
+        },
+        {
+          "name": "client",
+          "writable": true
+        },
+        {
+          "name": "worker",
+          "writable": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "expire_undelivered",
+      "docs": [
+        "The worker accepted and never delivered: refund the client and give it",
+        "the worker's bond."
+      ],
+      "discriminator": [
+        82,
+        56,
+        29,
+        113,
+        221,
+        79,
+        104,
+        160
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true
+        },
+        {
+          "name": "job",
+          "writable": true
+        },
+        {
+          "name": "client",
+          "writable": true
+        },
+        {
+          "name": "worker",
+          "writable": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "freeze_agent",
+      "docs": [
+        "Kill switch: a frozen agent's wallet can do nothing and it cannot be",
+        "hired. Exits that anyone may call still work, so open jobs still end."
+      ],
+      "discriminator": [
+        142,
+        40,
+        239,
+        10,
+        18,
+        216,
+        106,
+        176
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "signer": true
+        },
+        {
+          "name": "agent",
+          "writable": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "fund",
+      "docs": [
+        "Anyone may add to an agent's spendable balance."
+      ],
+      "discriminator": [
+        218,
+        188,
+        111,
+        221,
+        152,
+        113,
+        174,
+        7
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true
+        },
+        {
+          "name": "agent",
+          "writable": true
+        },
+        {
+          "name": "from",
+          "writable": true
+        },
+        {
+          "name": "vault",
+          "writable": true
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "token_program"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "initialize",
+      "discriminator": [
+        175,
+        175,
+        109,
+        31,
+        13,
+        152,
+        155,
+        237
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "vault",
+          "writable": true
+        },
+        {
+          "name": "token_program"
+        },
+        {
+          "name": "system_program"
+        }
+      ],
+      "args": [
+        {
+          "name": "arbiter",
+          "type": "pubkey"
+        },
+        {
+          "name": "pauser",
+          "type": "pubkey"
+        },
+        {
+          "name": "fee_recipient",
+          "type": "pubkey"
+        },
+        {
+          "name": "params",
+          "type": {
+            "defined": {
+              "name": "Params"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "pause",
+      "docs": [
+        "Stops new hires only. Every exit stays open, so no money is trapped."
+      ],
+      "discriminator": [
+        211,
+        22,
+        221,
+        251,
+        74,
+        121,
+        193,
+        47
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "propose_owner",
+      "docs": [
+        "Two-step ownership transfer, so a typo cannot hand the program away."
+      ],
+      "discriminator": [
+        90,
+        57,
+        141,
+        110,
+        196,
+        241,
+        172,
+        39
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "new_owner",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "propose_wallet",
+      "docs": [
+        "Owner proposes a new wallet (key rotation); the old one keeps working",
+        "until the new one accepts. `None` withdraws a proposal."
+      ],
+      "discriminator": [
+        227,
+        190,
+        134,
+        7,
+        242,
+        238,
+        103,
+        48
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "signer": true
+        },
+        {
+          "name": "agent",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "wallet",
+          "type": {
+            "option": "pubkey"
+          }
+        }
+      ]
+    },
+    {
+      "name": "register_agent",
+      "docs": [
+        "Register an agent; its owner signs and pays the account's rent. The",
+        "wallet must then call `accept_wallet` itself: an agent cannot claim",
+        "someone else's key."
+      ],
+      "discriminator": [
+        135,
+        157,
+        66,
+        195,
+        2,
+        113,
+        175,
+        30
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true
+        },
+        {
+          "name": "agent",
+          "writable": true
+        },
+        {
+          "name": "system_program"
+        }
+      ],
+      "args": [
+        {
+          "name": "wallet",
+          "type": "pubkey"
+        },
+        {
+          "name": "card_uri",
+          "type": "string"
+        },
+        {
+          "name": "per_task_cap",
+          "type": {
+            "option": "u64"
+          }
+        },
+        {
+          "name": "daily_cap",
+          "type": {
+            "option": "u64"
+          }
+        }
+      ]
+    },
+    {
+      "name": "request_unstake",
+      "discriminator": [
+        44,
+        154,
+        110,
+        253,
+        160,
+        202,
+        54,
+        34
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "signer": true
+        },
+        {
+          "name": "config"
+        },
+        {
+          "name": "agent",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "resolve_dispute",
+      "docs": [
+        "The arbiter rules. No deadline: it may rule until someone calls",
+        "`expire_dispute`. The arbiter can be a Squads multisig vault."
+      ],
+      "discriminator": [
+        231,
+        6,
+        202,
+        6,
+        96,
+        103,
+        12,
+        230
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true
+        },
+        {
+          "name": "job",
+          "writable": true
+        },
+        {
+          "name": "client",
+          "writable": true
+        },
+        {
+          "name": "worker",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "for_worker",
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "name": "set_arbiter",
+      "discriminator": [
+        15,
+        205,
+        194,
+        180,
+        172,
+        213,
+        113,
+        211
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "arbiter",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "set_caps",
+      "discriminator": [
+        173,
+        204,
+        47,
+        125,
+        102,
+        192,
+        240,
+        161
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "signer": true
+        },
+        {
+          "name": "agent",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "per_task_cap",
+          "type": "u64"
+        },
+        {
+          "name": "daily_cap",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "set_card_uri",
+      "discriminator": [
+        58,
+        183,
+        232,
+        54,
+        206,
+        105,
+        22,
+        122
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "signer": true
+        },
+        {
+          "name": "agent",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "card_uri",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "set_fee_recipient",
+      "discriminator": [
+        227,
+        18,
+        215,
+        42,
+        237,
+        246,
+        151,
+        66
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "fee_recipient",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "set_params",
+      "docs": [
+        "New parameters apply to new jobs only: each job copies its windows,",
+        "fee and bonds when it is created."
+      ],
+      "discriminator": [
+        27,
+        234,
+        178,
+        52,
+        147,
+        2,
+        187,
+        141
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": {
+              "name": "Params"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "set_pauser",
+      "discriminator": [
+        22,
+        198,
+        152,
+        61,
+        2,
+        13,
+        145,
+        238
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "pauser",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "stake",
+      "docs": [
+        "Anyone may add to an agent's stake (makes it hireable, backs its bonds)."
+      ],
+      "discriminator": [
+        206,
+        176,
+        202,
+        18,
+        200,
+        209,
+        179,
+        108
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true
+        },
+        {
+          "name": "agent",
+          "writable": true
+        },
+        {
+          "name": "from",
+          "writable": true
+        },
+        {
+          "name": "vault",
+          "writable": true
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "token_program"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "submit_result",
+      "discriminator": [
+        240,
+        42,
+        89,
+        180,
+        10,
+        239,
+        9,
+        214
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true
+        },
+        {
+          "name": "job",
+          "writable": true
+        },
+        {
+          "name": "client",
+          "writable": true
+        },
+        {
+          "name": "worker",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "result_hash",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "unfreeze_agent",
+      "discriminator": [
+        31,
+        194,
+        10,
+        120,
+        66,
+        217,
+        180,
+        103
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "signer": true
+        },
+        {
+          "name": "agent",
+          "writable": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "unpause",
+      "discriminator": [
+        169,
+        144,
+        4,
+        38,
+        10,
+        141,
+        188,
+        255
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "withdraw",
+      "docs": [
+        "Owner withdraws from the agent's balance, to any token account of the",
+        "mint. Needs the OWNER's signature: a leaked agent key cannot."
+      ],
+      "discriminator": [
+        183,
+        18,
+        70,
+        156,
+        148,
+        109,
+        161,
+        34
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true
+        },
+        {
+          "name": "agent",
+          "writable": true
+        },
+        {
+          "name": "to",
+          "writable": true
+        },
+        {
+          "name": "vault",
+          "writable": true
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "token_program"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Agent",
+      "discriminator": [
+        47,
+        166,
+        112,
+        147,
+        155,
+        197,
+        86,
+        7
+      ]
+    },
+    {
+      "name": "Config",
+      "discriminator": [
+        155,
+        12,
+        170,
+        224,
+        30,
+        250,
+        204,
+        130
+      ]
+    },
+    {
+      "name": "Job",
+      "discriminator": [
+        75,
+        124,
+        80,
+        203,
+        161,
+        180,
+        202,
+        80
+      ]
+    },
+    {
+      "name": "WalletIndex",
+      "discriminator": [
+        175,
+        97,
+        65,
+        11,
+        123,
+        121,
+        12,
+        83
+      ]
+    }
+  ],
+  "types": [
+    {
+      "name": "Agent",
+      "docs": [
+        "An agent: `owner` is the person (their wallet signs registration, caps",
+        "and every withdrawal); `wallet` is the keypair the agent signs jobs with.",
+        "The program accepts the wallet for job methods only, so a stolen agent",
+        "key can spend at most its caps and can never withdraw."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "id",
+            "type": "u64"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "wallet",
+            "type": {
+              "option": "pubkey"
+            }
+          },
+          {
+            "name": "pending_wallet",
+            "type": {
+              "option": "pubkey"
+            }
+          },
+          {
+            "name": "card_uri",
+            "type": "string"
+          },
+          {
+            "name": "frozen",
+            "type": "bool"
+          },
+          {
+            "name": "registered_at",
+            "type": "u64"
+          },
+          {
+            "name": "purse",
+            "type": {
+              "defined": {
+                "name": "Purse"
+              }
+            }
+          },
+          {
+            "name": "stake",
+            "type": {
+              "defined": {
+                "name": "Stake"
+              }
+            }
+          },
+          {
+            "name": "worker_record",
+            "type": {
+              "defined": {
+                "name": "WorkerRecord"
+              }
+            }
+          },
+          {
+            "name": "client_record",
+            "type": {
+              "defined": {
+                "name": "ClientRecord"
+              }
+            }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "AgentFrozen",
+      "type": {
+        "fields": [
+          {
+            "name": "agent_id",
+            "type": "u64"
+          },
+          {
+            "name": "frozen",
+            "type": "bool"
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "name": "AgentRegistered",
+      "type": {
+        "fields": [
+          {
+            "name": "agent_id",
+            "type": "u64"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "wallet",
+            "type": "pubkey"
+          },
+          {
+            "name": "card_uri",
+            "type": "string"
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "name": "BondSeized",
+      "type": {
+        "fields": [
+          {
+            "name": "job_id",
+            "type": "u64"
+          },
+          {
+            "name": "worker",
+            "type": "u64"
+          },
+          {
+            "name": "client",
+            "type": "u64"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "name": "CapsSet",
+      "type": {
+        "fields": [
+          {
+            "name": "agent_id",
+            "type": "u64"
+          },
+          {
+            "name": "per_task_cap",
+            "type": "u64"
+          },
+          {
+            "name": "daily_cap",
+            "type": "u64"
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "name": "ClientRecord",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "paid",
+            "type": "u64"
+          },
+          {
+            "name": "disputes_rejected",
+            "type": "u64"
+          },
+          {
+            "name": "disputes_upheld",
+            "type": "u64"
+          },
+          {
+            "name": "silent",
+            "type": "u64"
+          },
+          {
+            "name": "reviews",
+            "type": "u64"
+          },
+          {
+            "name": "review_score_sum",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Config",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "pending_owner",
+            "type": {
+              "option": "pubkey"
+            }
+          },
+          {
+            "name": "arbiter",
+            "type": "pubkey"
+          },
+          {
+            "name": "pauser",
+            "type": "pubkey"
+          },
+          {
+            "name": "fee_recipient",
+            "type": "pubkey"
+          },
+          {
+            "name": "mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "paused",
+            "type": "bool"
+          },
+          {
+            "name": "params",
+            "type": {
+              "defined": {
+                "name": "Params"
+              }
+            }
+          },
+          {
+            "name": "next_agent_id",
+            "type": "u64"
+          },
+          {
+            "name": "next_job_id",
+            "type": "u64"
+          },
+          {
+            "name": "totals",
+            "type": {
+              "defined": {
+                "name": "Totals"
+              }
+            }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "vault_bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "DirectPaid",
+      "type": {
+        "fields": [
+          {
+            "name": "job_id",
+            "type": "u64"
+          },
+          {
+            "name": "client",
+            "type": "u64"
+          },
+          {
+            "name": "worker",
+            "type": "u64"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "fee",
+            "type": "u64"
+          },
+          {
+            "name": "spec_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "name": "DisputeBondSettled",
+      "type": {
+        "fields": [
+          {
+            "name": "job_id",
+            "type": "u64"
+          },
+          {
+            "name": "to",
+            "type": "u64"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "name": "DisputeExpired",
+      "type": {
+        "fields": [
+          {
+            "name": "job_id",
+            "type": "u64"
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "name": "DisputeResolved",
+      "type": {
+        "fields": [
+          {
+            "name": "job_id",
+            "type": "u64"
+          },
+          {
+            "name": "for_worker",
+            "type": "bool"
+          },
+          {
+            "name": "arbiter",
+            "type": "pubkey"
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "name": "FeesClaimed",
+      "type": {
+        "fields": [
+          {
+            "name": "to",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "docs": [
+        "`kind` 0 = spendable balance, 1 = stake. `from` is the token owner that paid."
+      ],
+      "name": "Funded",
+      "type": {
+        "fields": [
+          {
+            "name": "agent_id",
+            "type": "u64"
+          },
+          {
+            "name": "from",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "kind",
+            "type": "u8"
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "name": "Job",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "id",
+            "type": "u64"
+          },
+          {
+            "name": "client",
+            "type": "u64"
+          },
+          {
+            "name": "worker",
+            "type": "u64"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "fee",
+            "type": "u64"
+          },
+          {
+            "name": "state",
+            "type": {
+              "defined": {
+                "name": "JobState"
+              }
+            }
+          },
+          {
+            "name": "accept_deadline",
+            "type": "u64"
+          },
+          {
+            "name": "work_deadline",
+            "type": "u64"
+          },
+          {
+            "name": "review_deadline",
+            "type": "u64"
+          },
+          {
+            "name": "dispute_deadline",
+            "type": "u64"
+          },
+          {
+            "name": "review_window",
+            "type": "u64"
+          },
+          {
+            "name": "dispute_timeout",
+            "type": "u64"
+          },
+          {
+            "name": "spec_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "result_hash",
+            "type": {
+              "option": {
+                "array": [
+                  "u8",
+                  32
+                ]
+              }
+            }
+          },
+          {
+            "name": "worker_bond",
+            "type": "u64"
+          },
+          {
+            "name": "dispute_bond",
+            "type": "u64"
+          },
+          {
+            "name": "bond_locked",
+            "docs": [
+              "True while `worker_bond` is locked in the worker's stake."
+            ],
+            "type": "bool"
+          },
+          {
+            "name": "review_hash",
+            "docs": [
+              "Hash of the reviewer's verdict (a judge's response) or the dispute reason."
+            ],
+            "type": {
+              "option": {
+                "array": [
+                  "u8",
+                  32
+                ]
+              }
+            }
+          },
+          {
+            "name": "outcome",
+            "type": {
+              "option": {
+                "defined": {
+                  "name": "Outcome"
+                }
+              }
+            }
+          },
+          {
+            "name": "created_at",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "JobAccepted",
+      "type": {
+        "fields": [
+          {
+            "name": "job_id",
+            "type": "u64"
+          },
+          {
+            "name": "worker",
+            "type": "u64"
+          },
+          {
+            "name": "bond",
+            "type": "u64"
+          },
+          {
+            "name": "work_deadline",
+            "type": "u64"
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "name": "JobCreated",
+      "type": {
+        "fields": [
+          {
+            "name": "job_id",
+            "type": "u64"
+          },
+          {
+            "name": "client",
+            "type": "u64"
+          },
+          {
+            "name": "worker",
+            "type": "u64"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "fee",
+            "type": "u64"
+          },
+          {
+            "name": "spec_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "accept_deadline",
+            "type": "u64"
+          },
+          {
+            "name": "work_deadline",
+            "type": "u64"
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "name": "JobDisputed",
+      "type": {
+        "fields": [
+          {
+            "name": "job_id",
+            "type": "u64"
+          },
+          {
+            "name": "bond",
+            "type": "u64"
+          },
+          {
+            "name": "dispute_deadline",
+            "type": "u64"
+          },
+          {
+            "name": "reason_hash",
+            "type": {
+              "option": {
+                "array": [
+                  "u8",
+                  32
+                ]
+              }
+            }
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "docs": [
+        "`reason`: \"cancelled\", \"unaccepted\", \"undelivered\", \"dispute\"."
+      ],
+      "name": "JobRefunded",
+      "type": {
+        "fields": [
+          {
+            "name": "job_id",
+            "type": "u64"
+          },
+          {
+            "name": "client",
+            "type": "u64"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "reason",
+            "type": "string"
+          },
+          {
+            "name": "outcome",
+            "type": {
+              "option": {
+                "defined": {
+                  "name": "Outcome"
+                }
+              }
+            }
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "name": "JobSettled",
+      "type": {
+        "fields": [
+          {
+            "name": "job_id",
+            "type": "u64"
+          },
+          {
+            "name": "worker",
+            "type": "u64"
+          },
+          {
+            "name": "paid",
+            "type": "u64"
+          },
+          {
+            "name": "fee",
+            "type": "u64"
+          },
+          {
+            "name": "outcome",
+            "type": {
+              "defined": {
+                "name": "Outcome"
+              }
+            }
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "name": "JobState",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Created"
+          },
+          {
+            "name": "Accepted"
+          },
+          {
+            "name": "Submitted"
+          },
+          {
+            "name": "Disputed"
+          },
+          {
+            "name": "Settled"
+          },
+          {
+            "name": "Refunded"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Outcome",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Success"
+          },
+          {
+            "name": "Failed"
+          },
+          {
+            "name": "DisputeLost"
+          },
+          {
+            "name": "Unresolved"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Params",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "protocol_fee_bps",
+            "type": "u16"
+          },
+          {
+            "name": "min_fee",
+            "type": "u64"
+          },
+          {
+            "name": "min_job_amount",
+            "type": "u64"
+          },
+          {
+            "name": "max_job_amount",
+            "type": "u64"
+          },
+          {
+            "name": "fast_path_max",
+            "docs": [
+              "Largest `direct_pay`; 0 turns the fast path off."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "review_window",
+            "type": "u64"
+          },
+          {
+            "name": "max_accept_window",
+            "type": "u64"
+          },
+          {
+            "name": "max_work_window",
+            "type": "u64"
+          },
+          {
+            "name": "dispute_timeout",
+            "type": "u64"
+          },
+          {
+            "name": "bond_bps",
+            "type": "u16"
+          },
+          {
+            "name": "min_bond",
+            "type": "u64"
+          },
+          {
+            "name": "dispute_bond_bps",
+            "type": "u16"
+          },
+          {
+            "name": "min_dispute_bond",
+            "type": "u64"
+          },
+          {
+            "name": "min_stake",
+            "type": "u64"
+          },
+          {
+            "name": "withdraw_delay",
+            "type": "u64"
+          },
+          {
+            "name": "default_per_task_cap",
+            "type": "u64"
+          },
+          {
+            "name": "default_daily_cap",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PausedSet",
+      "type": {
+        "fields": [
+          {
+            "name": "by",
+            "type": "pubkey"
+          },
+          {
+            "name": "paused",
+            "type": "bool"
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "name": "Purse",
+      "docs": [
+        "What the agent's wallet may spend, and what it has."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "balance",
+            "type": "u64"
+          },
+          {
+            "name": "per_task_cap",
+            "type": "u64"
+          },
+          {
+            "name": "daily_cap",
+            "type": "u64"
+          },
+          {
+            "name": "window_total",
+            "type": "u64"
+          },
+          {
+            "name": "last_hour",
+            "type": "u64"
+          },
+          {
+            "name": "buckets",
+            "type": {
+              "array": [
+                "u64",
+                25
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "ResultSubmitted",
+      "type": {
+        "fields": [
+          {
+            "name": "job_id",
+            "type": "u64"
+          },
+          {
+            "name": "result_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "review_deadline",
+            "type": "u64"
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "docs": [
+        "`side` 0 = worker, 1 = client; `value` 0..=100."
+      ],
+      "name": "Review",
+      "type": {
+        "fields": [
+          {
+            "name": "job_id",
+            "type": "u64"
+          },
+          {
+            "name": "agent_id",
+            "type": "u64"
+          },
+          {
+            "name": "side",
+            "type": "u8"
+          },
+          {
+            "name": "value",
+            "type": "u8"
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "docs": [
+        "`role`: \"owner\", \"arbiter\", \"pauser\", \"fee_recipient\", \"params\"."
+      ],
+      "name": "RoleSet",
+      "type": {
+        "fields": [
+          {
+            "name": "role",
+            "type": "string"
+          },
+          {
+            "name": "account",
+            "type": "pubkey"
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "name": "Stake",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "available",
+            "docs": [
+              "Stake that counts, including what is locked against open jobs."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "pending",
+            "docs": [
+              "Requested for withdrawal; does not count towards hireability."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "unlock_at",
+            "type": "u64"
+          },
+          {
+            "name": "locked",
+            "docs": [
+              "Sum of the bonds of this agent's accepted, unfinished jobs."
+            ],
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Totals",
+      "docs": [
+        "Every token the vault holds is in exactly one of these buckets.",
+        "Invariant I1: vault balance == sum of all fields. (No `in_flight`: a",
+        "Solana transfer is atomic with the instruction that makes it.)"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "locked",
+            "type": "u64"
+          },
+          {
+            "name": "dispute_bonds",
+            "type": "u64"
+          },
+          {
+            "name": "balances",
+            "type": "u64"
+          },
+          {
+            "name": "stakes",
+            "type": "u64"
+          },
+          {
+            "name": "fees_owed",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "UnstakeCancelled",
+      "type": {
+        "fields": [
+          {
+            "name": "agent_id",
+            "type": "u64"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "name": "UnstakeRequested",
+      "type": {
+        "fields": [
+          {
+            "name": "agent_id",
+            "type": "u64"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "unlock_at",
+            "type": "u64"
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "name": "Unstaked",
+      "type": {
+        "fields": [
+          {
+            "name": "agent_id",
+            "type": "u64"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "name": "WalletAccepted",
+      "type": {
+        "fields": [
+          {
+            "name": "agent_id",
+            "type": "u64"
+          },
+          {
+            "name": "wallet",
+            "type": "pubkey"
+          },
+          {
+            "name": "previous",
+            "type": {
+              "option": "pubkey"
+            }
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "name": "WalletIndex",
+      "docs": [
+        "One wallet acts for at most one agent. `agent_id` 0 means free (ids start at 1)."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "agent_id",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "WalletProposed",
+      "type": {
+        "fields": [
+          {
+            "name": "agent_id",
+            "type": "u64"
+          },
+          {
+            "name": "wallet",
+            "type": {
+              "option": "pubkey"
+            }
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "name": "Withdrawn",
+      "type": {
+        "fields": [
+          {
+            "name": "agent_id",
+            "type": "u64"
+          },
+          {
+            "name": "to",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          }
+        ],
+        "kind": "struct"
+      }
+    },
+    {
+      "name": "WorkerRecord",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "completed",
+            "type": "u64"
+          },
+          {
+            "name": "failed",
+            "type": "u64"
+          },
+          {
+            "name": "disputes_lost",
+            "type": "u64"
+          },
+          {
+            "name": "unresolved",
+            "type": "u64"
+          },
+          {
+            "name": "reviews",
+            "type": "u64"
+          },
+          {
+            "name": "review_score_sum",
+            "type": "u64"
+          }
+        ]
+      }
+    }
+  ],
+  "constants": [],
+  "events": [
+    {
+      "discriminator": [
+        49,
+        38,
+        208,
+        185,
+        219,
+        3,
+        92,
+        27
+      ],
+      "name": "AgentFrozen"
+    },
+    {
+      "discriminator": [
+        191,
+        78,
+        217,
+        54,
+        232,
+        100,
+        189,
+        85
+      ],
+      "name": "AgentRegistered"
+    },
+    {
+      "discriminator": [
+        57,
+        73,
+        100,
+        133,
+        150,
+        187,
+        226,
+        101
+      ],
+      "name": "BondSeized"
+    },
+    {
+      "discriminator": [
+        163,
+        165,
+        113,
+        36,
+        109,
+        76,
+        122,
+        29
+      ],
+      "name": "CapsSet"
+    },
+    {
+      "discriminator": [
+        212,
+        130,
+        178,
+        29,
+        192,
+        52,
+        145,
+        206
+      ],
+      "name": "DirectPaid"
+    },
+    {
+      "discriminator": [
+        251,
+        154,
+        122,
+        124,
+        74,
+        130,
+        177,
+        34
+      ],
+      "name": "DisputeBondSettled"
+    },
+    {
+      "discriminator": [
+        28,
+        47,
+        191,
+        124,
+        204,
+        113,
+        101,
+        116
+      ],
+      "name": "DisputeExpired"
+    },
+    {
+      "discriminator": [
+        121,
+        64,
+        249,
+        153,
+        139,
+        128,
+        236,
+        187
+      ],
+      "name": "DisputeResolved"
+    },
+    {
+      "discriminator": [
+        22,
+        104,
+        110,
+        222,
+        38,
+        157,
+        14,
+        62
+      ],
+      "name": "FeesClaimed"
+    },
+    {
+      "discriminator": [
+        67,
+        84,
+        56,
+        88,
+        192,
+        12,
+        201,
+        177
+      ],
+      "name": "Funded"
+    },
+    {
+      "discriminator": [
+        47,
+        54,
+        152,
+        59,
+        118,
+        195,
+        251,
+        114
+      ],
+      "name": "JobAccepted"
+    },
+    {
+      "discriminator": [
+        48,
+        110,
+        162,
+        177,
+        67,
+        74,
+        159,
+        131
+      ],
+      "name": "JobCreated"
+    },
+    {
+      "discriminator": [
+        203,
+        7,
+        212,
+        211,
+        189,
+        75,
+        64,
+        15
+      ],
+      "name": "JobDisputed"
+    },
+    {
+      "discriminator": [
+        156,
+        171,
+        111,
+        37,
+        17,
+        174,
+        8,
+        167
+      ],
+      "name": "JobRefunded"
+    },
+    {
+      "discriminator": [
+        130,
+        105,
+        205,
+        34,
+        87,
+        86,
+        152,
+        27
+      ],
+      "name": "JobSettled"
+    },
+    {
+      "discriminator": [
+        171,
+        125,
+        127,
+        156,
+        233,
+        81,
+        68,
+        66
+      ],
+      "name": "PausedSet"
+    },
+    {
+      "discriminator": [
+        156,
+        153,
+        163,
+        89,
+        245,
+        144,
+        63,
+        94
+      ],
+      "name": "ResultSubmitted"
+    },
+    {
+      "discriminator": [
+        155,
+        89,
+        17,
+        138,
+        221,
+        99,
+        126,
+        160
+      ],
+      "name": "Review"
+    },
+    {
+      "discriminator": [
+        188,
+        56,
+        139,
+        81,
+        114,
+        65,
+        108,
+        196
+      ],
+      "name": "RoleSet"
+    },
+    {
+      "discriminator": [
+        102,
+        223,
+        189,
+        101,
+        201,
+        223,
+        180,
+        38
+      ],
+      "name": "UnstakeCancelled"
+    },
+    {
+      "discriminator": [
+        21,
+        253,
+        177,
+        85,
+        129,
+        206,
+        42,
+        152
+      ],
+      "name": "UnstakeRequested"
+    },
+    {
+      "discriminator": [
+        27,
+        179,
+        156,
+        215,
+        47,
+        71,
+        195,
+        7
+      ],
+      "name": "Unstaked"
+    },
+    {
+      "discriminator": [
+        53,
+        227,
+        132,
+        163,
+        50,
+        10,
+        219,
+        181
+      ],
+      "name": "WalletAccepted"
+    },
+    {
+      "discriminator": [
+        66,
+        76,
+        27,
+        12,
+        19,
+        53,
+        124,
+        38
+      ],
+      "name": "WalletProposed"
+    },
+    {
+      "discriminator": [
+        20,
+        89,
+        223,
+        198,
+        194,
+        124,
+        219,
+        13
+      ],
+      "name": "Withdrawn"
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "NotOwner"
+    },
+    {
+      "code": 6001,
+      "name": "NotPendingOwner"
+    },
+    {
+      "code": 6002,
+      "name": "NotArbiter"
+    },
+    {
+      "code": 6003,
+      "name": "NotPauser"
+    },
+    {
+      "code": 6004,
+      "name": "Paused"
+    },
+    {
+      "code": 6005,
+      "name": "WrongMint"
+    },
+    {
+      "code": 6006,
+      "name": "WrongRecipient"
+    },
+    {
+      "code": 6007,
+      "name": "NoSuchAgent"
+    },
+    {
+      "code": 6008,
+      "name": "NotAgentOwner"
+    },
+    {
+      "code": 6009,
+      "name": "NotAgentWallet"
+    },
+    {
+      "code": 6010,
+      "name": "NotPendingWallet"
+    },
+    {
+      "code": 6011,
+      "name": "WalletTaken"
+    },
+    {
+      "code": 6012,
+      "name": "AgentFrozen"
+    },
+    {
+      "code": 6013,
+      "name": "CardUriTooLong"
+    },
+    {
+      "code": 6014,
+      "name": "ZeroAmount"
+    },
+    {
+      "code": 6015,
+      "name": "AmountBelowMinimum"
+    },
+    {
+      "code": 6016,
+      "name": "AmountAboveMaximum"
+    },
+    {
+      "code": 6017,
+      "name": "AmountTooLargeForFastPath"
+    },
+    {
+      "code": 6018,
+      "name": "SelfDealing"
+    },
+    {
+      "code": 6019,
+      "name": "SameOwner"
+    },
+    {
+      "code": 6020,
+      "name": "NotHireable"
+    },
+    {
+      "code": 6021,
+      "name": "WindowTooLong"
+    },
+    {
+      "code": 6022,
+      "name": "NoSuchJob"
+    },
+    {
+      "code": 6023,
+      "name": "InvalidState"
+    },
+    {
+      "code": 6024,
+      "name": "DeadlinePassed"
+    },
+    {
+      "code": 6025,
+      "name": "DeadlineNotPassed"
+    },
+    {
+      "code": 6026,
+      "name": "InsufficientBalance"
+    },
+    {
+      "code": 6027,
+      "name": "PerTaskCapExceeded"
+    },
+    {
+      "code": 6028,
+      "name": "DailyCapExceeded"
+    },
+    {
+      "code": 6029,
+      "name": "InsufficientBond"
+    },
+    {
+      "code": 6030,
+      "name": "WithdrawAlreadyPending"
+    },
+    {
+      "code": 6031,
+      "name": "NothingPending"
+    },
+    {
+      "code": 6032,
+      "name": "StillLocked"
+    },
+    {
+      "code": 6033,
+      "name": "NothingOwed"
+    },
+    {
+      "code": 6034,
+      "name": "FeeTooHigh"
+    },
+    {
+      "code": 6035,
+      "name": "InvalidWindow"
+    },
+    {
+      "code": 6036,
+      "name": "InvalidFeeFloor"
+    },
+    {
+      "code": 6037,
+      "name": "InvalidBond"
+    },
+    {
+      "code": 6038,
+      "name": "InvalidStake"
+    },
+    {
+      "code": 6039,
+      "name": "InvalidCaps"
+    }
+  ]
+}

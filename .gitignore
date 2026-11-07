@@ -1,0 +1,9 @@
+node_modules/
+.env
+.env.*
+!.env.example
+*.log
+.ledger/
+validator.log
+# saved test keys of throwaway devnet accounts (src/dev/throwaway.ts)
+.keys/
