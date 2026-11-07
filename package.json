@@ -13,7 +13,6 @@
     "test": "vitest run",
     "demo": "tsx scripts/demo.ts",
     "demo:local": "tsx scripts/local-up.ts",
-    "facilitator": "tsx src/facilitator/main.ts",
     "check": "npm run typecheck && npm test",
     "test:live": "tsx scripts/local-up.ts --checks",
     "smoke": "tsx scripts/x402-smoke.ts",

@@ -7,3 +7,6 @@ node_modules/
 validator.log
 # saved test keys of throwaway devnet accounts (src/dev/throwaway.ts)
 .keys/
+# throwaway keys must never be committed, even outside .keys/
+*-keypair.json
+.localnet/
