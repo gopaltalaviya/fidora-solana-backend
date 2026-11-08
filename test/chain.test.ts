@@ -8,7 +8,7 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {afterEach, describe, expect, it, vi} from 'vitest';
 import {Connection, Keypair, SystemProgram, Transaction} from '@solana/web3.js';
-import {type Cluster, PROGRAM_ID, ROOT, SOLANA_DEVNET, openCluster, programsRoot, sendAndConfirm} from '../src/chain/fidora.js';
+import {type Cluster, PROGRAM_ID, ROOT, SOLANA_DEVNET, openCluster, patientFetch, programsRoot, sendAndConfirm} from '../src/chain/fidora.js';
 
 const MAINNET_GENESIS = '5eykt4UsFv8P8NJdTREpY1vzqKqZKvdpKuc147dw2N9d';
 const TESTNET_GENESIS = '4uhcVJyU9pJkvQyS88uRDiswHXSCkY3zQawwpjk2NsNY';
@@ -91,5 +91,71 @@ describe('an empty line copied from .env.example is unset, not a value', () => {
   it('FIDORA_PROGRAMS_ROOT= (empty) still finds the programs repo beside this one', () => {
     expect(programsRoot({FIDORA_PROGRAMS_ROOT: ''})).toBe(programsRoot({}));
     expect(programsRoot({FIDORA_PROGRAMS_ROOT: ''})).not.toBe(join(ROOT));
+  });
+});
+
+describe('patientFetch waits out a rate-limited public RPC', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.useRealTimers();
+  });
+  const reply = (status: number) => new Response('{}', {status});
+
+  it('retries 429s, then returns the first answer that is not 429', async () => {
+    vi.useFakeTimers();
+    const fetch = vi.fn().mockResolvedValueOnce(reply(429)).mockResolvedValueOnce(reply(429)).mockResolvedValueOnce(reply(200));
+    vi.stubGlobal('fetch', fetch);
+    const res = patientFetch('https://api.devnet.solana.com', {method: 'POST'});
+    await vi.runAllTimersAsync();
+    expect((await res).status).toBe(200);
+    expect(fetch).toHaveBeenCalledTimes(3);
+  });
+
+  it('retries a batch whose HTTP 200 carries a JSON-RPC 429 inside', async () => {
+    vi.useFakeTimers();
+    const limited = new Response(JSON.stringify([{jsonrpc: '2.0', id: 1, result: null}, {jsonrpc: '2.0', id: 2, error: {code: 429, message: 'Too many requests for a specific RPC call'}}]), {status: 200});
+    const good = new Response(JSON.stringify([{jsonrpc: '2.0', id: 1, result: null}, {jsonrpc: '2.0', id: 2, result: null}]), {status: 200});
+    const fetch = vi.fn().mockResolvedValueOnce(limited).mockResolvedValueOnce(good);
+    vi.stubGlobal('fetch', fetch);
+    const res = patientFetch('https://api.devnet.solana.com', {method: 'POST'});
+    await vi.runAllTimersAsync();
+    expect(await (await res).json()).toEqual([{jsonrpc: '2.0', id: 1, result: null}, {jsonrpc: '2.0', id: 2, result: null}]);
+    expect(fetch).toHaveBeenCalledTimes(2);
+  });
+
+  it('returns a 200 whose body only mentions 429 in data, not as an error code, at once', async () => {
+    const fetch = vi.fn().mockResolvedValue(new Response(JSON.stringify({jsonrpc: '2.0', id: 1, result: {value: 429}}), {status: 200}));
+    vi.stubGlobal('fetch', fetch);
+    expect((await patientFetch('https://api.devnet.solana.com')).status).toBe(200);
+    expect(fetch).toHaveBeenCalledTimes(1);
+  });
+
+  it('retries a dropped connection, but rethrows any other error at once', async () => {
+    vi.useFakeTimers();
+    const f = vi.fn().mockRejectedValueOnce(new TypeError('fetch failed')).mockResolvedValueOnce(new Response('{}', {status: 200}));
+    vi.stubGlobal('fetch', f);
+    const res = patientFetch('https://api.devnet.solana.com');
+    await vi.runAllTimersAsync();
+    expect((await res).status).toBe(200);
+    expect(f).toHaveBeenCalledTimes(2);
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new RangeError('not a network error')));
+    await expect(patientFetch('https://api.devnet.solana.com')).rejects.toThrow(RangeError);
+  });
+
+  it('returns any other status at once, without retrying', async () => {
+    const fetch = vi.fn().mockResolvedValue(reply(500));
+    vi.stubGlobal('fetch', fetch);
+    expect((await patientFetch('https://api.devnet.solana.com')).status).toBe(500);
+    expect(fetch).toHaveBeenCalledTimes(1);
+  });
+
+  it('stops after 13 attempts and hands the 429 back, never looping forever', async () => {
+    vi.useFakeTimers();
+    const fetch = vi.fn().mockImplementation(async () => reply(429));
+    vi.stubGlobal('fetch', fetch);
+    const res = patientFetch('https://api.devnet.solana.com');
+    await vi.runAllTimersAsync();
+    expect((await res).status).toBe(429);
+    expect(fetch).toHaveBeenCalledTimes(13);
   });
 });

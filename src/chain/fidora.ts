@@ -61,6 +61,31 @@ const DEFAULT_RPC: Record<ClusterName, string> = {
   devnet: 'https://api.devnet.solana.com',
 };
 
+/**
+ * The public devnet endpoint answers bursts with 429. web3.js's own retry
+ * gives up after ~15 s, which a full demo outlasts; this one waits up to ~4
+ * minutes per request (1, 2, 4 … capped at 30 s, plus jitter), and only on
+ * a rate limit: a dropped connection (a fetch TypeError) is retried the same way; every other status and error is returned unchanged.
+ * A batch (getTransactions) is limited inside an HTTP 200: its items carry
+ * JSON-RPC error 429, so a 200 whose body has one is retried whole.
+ */
+export async function patientFetch(url: string | URL | Request, init?: RequestInit): Promise<Response> {
+  for (let attempt = 0; ; attempt++) {
+    let res;
+    try {
+      res = await fetch(url, init);
+    } catch (e) {
+      // A dropped connection (undici: "fetch failed") under load: retried too.
+      if (attempt >= 12 || !(e instanceof TypeError)) throw e;
+      await new Promise((r) => setTimeout(r, Math.min(30_000, 1000 * 2 ** attempt) + Math.random() * 500));
+      continue;
+    }
+    const limited = res.status === 429 || (res.ok && /"code"\s*:\s*429\b/.test(await res.clone().text()));
+    if (!limited || attempt >= 12) return res;
+    await new Promise((r) => setTimeout(r, Math.min(30_000, 1000 * 2 ** attempt) + Math.random() * 500));
+  }
+}
+
 /** Where the programs repo is: its deployments/<cluster>.json is the source of truth. */
 export function programsRoot(env = process.env): string {
   return resolve(env.FIDORA_PROGRAMS_ROOT || join(ROOT, '..', 'fidora-solana-programs'));
@@ -76,7 +101,10 @@ export async function openCluster(name: ClusterName, env = process.env): Promise
   if (deployment.programId !== PROGRAM_ID.toBase58()) {
     throw new Error(`deployment programId ${deployment.programId} differs from the IDL's ${PROGRAM_ID.toBase58()}`);
   }
-  const connection = new Connection(rpcUrl, 'confirmed');
+  const connection =
+    name === 'localnet'
+      ? new Connection(rpcUrl, 'confirmed')
+      : new Connection(rpcUrl, {commitment: 'confirmed', fetch: patientFetch, disableRetryOnRateLimit: true});
   const genesis = await connection.getGenesisHash();
   const network = `solana:${genesis.slice(0, 32)}`;
   const refused = PUBLIC_REFUSED[network];

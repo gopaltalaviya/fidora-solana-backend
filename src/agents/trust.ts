@@ -121,8 +121,11 @@ export async function readEvents(c: Cluster, maxTransactions = MAX_TRANSACTIONS)
   const funded: FundedEv[] = [];
   const created = new Map<string, {client: bigint; worker: bigint}>();
   const paid: PaidEv[] = [];
-  for (let i = 0; i < sigs.length; i += 50) {
-    const batch = sigs.slice(i, i + 50);
+  // The public devnet endpoint refuses a getTransactions batch of 10 or more
+  // outright (every item 429, measured 2026-11-08); 5 passes.
+  const size = c.name === 'localnet' ? 50 : 5;
+  for (let i = 0; i < sigs.length; i += size) {
+    const batch = sigs.slice(i, i + size);
     const txs = await c.connection.getTransactions(
       batch.map((s) => s.signature),
       {commitment: 'confirmed', maxSupportedTransactionVersion: 0},
