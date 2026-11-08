@@ -145,7 +145,7 @@ only. A local validator is never labelled devnet.
 ## Tests
 
 ```bash
-npm run check     # typecheck + 46 unit tests (tamper refusals, the pay and judge gates, trust, the chain layer)
+npm run check     # typecheck + 52 unit tests (tamper refusals, the pay and judge gates, trust, the chain layer)
 npm run test:live # a fresh validator, then every live check that needs no model: verify-solana (23),
                   # the x402 smoke, scripts/x402-attacks.ts (hostile workers), and the
                   # devnet sweep check (scripts/sweep-check.ts) → "All live checks passed."
