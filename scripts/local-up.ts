@@ -68,6 +68,11 @@ const args = [
   '18000-18200',
   '--rpc-port',
   '8899',
+  // The default keeps ~10,000 shreds: with DEMO_HOLD the history the
+  // interface reads (the program's events) was purged within minutes, and
+  // every page showed an empty record. 50M shreds keeps a demo's for hours.
+  '--limit-ledger-size',
+  '50000000',
   '--bpf-program',
   IDL.address,
   win ? toWsl(SO) : SO,
