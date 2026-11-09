@@ -34,6 +34,9 @@ npm ci
 npm run demo:local
 ```
 
+If `npm ci` refuses the lockfile (it was written by npm 11; npm 10, which
+ships with Node 22, rejects it), run `npm install` instead.
+
 To look at what the demo left on chain in the web interface, keep the chain
 running: `DEMO_HOLD=1 npm run demo:local`, then in
 [fidora-solana-interface](https://github.com/gopaltalaviya/fidora-solana-interface)
