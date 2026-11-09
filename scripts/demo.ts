@@ -65,10 +65,10 @@ const freePort = () =>
     });
   });
 
-/** A 0..1 confidence; a 1..100 percentage is read as one (Pactora's rule). */
+/** A 0..1 confidence; a 1..100 percentage is read as one (the earlier edition's rule). */
 const confidence = () => z.preprocess((v) => (typeof v === 'number' && v > 1 && v <= 100 ? v / 100 : v), z.number().min(0).max(1));
 
-// Pactora's three workers, unchanged: capability, price (base units), role, output.
+// The earlier edition's three workers, unchanged: capability, price (base units), role, output.
 const WORKERS = [
   {
     name: 'MarketResearch',

@@ -2,13 +2,13 @@
  * The orchestrator: one goal in, agents hired over x402, every payment held
  * in Fidora's escrow until a judge says the work earned it.
  *
- *   plan      Pactora's planner prompt, over the capabilities agents offer
+ *   plan      the earlier edition's planner prompt, over the capabilities agents offer
  *   discover  every registered agent on chain → its card (card_uri) →
  *             capability match, hireable (wallet, not frozen, staked)
  *   trust     the on-chain trust check; a `block` is left out before the
  *             model chooses, AND refused again inside x402 itself
  *             (onBeforePaymentCreation) — code, not the model, says no
- *   select    Pactora's selector prompt over protocol facts only
+ *   select    the earlier edition's selector prompt over protocol facts only
  *   pay       x402 `fidora-escrow`: the money is locked, the worker works,
  *             delivery is recorded with the hash of the body it sent. Before
  *             signing, the quote must be for the agent chosen, at no more
@@ -46,7 +46,7 @@ import {FidoraEscrowClient} from '../x402/escrow.js';
 import {type TrustReading, readTrustAll} from './trust.js';
 import type {AgentCard} from './worker.js';
 
-// ── Pactora's schemas, unchanged ─────────────────────────────────────────
+// ── The earlier edition's schemas, unchanged ─────────────────────────────────────────
 export const Plan = z.object({
   subtasks: z
     .array(

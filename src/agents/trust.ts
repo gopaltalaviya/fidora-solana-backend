@@ -1,7 +1,7 @@
 /**
  * Whether an agent's reputation deserves belief — read from the chain alone.
  *
- * The verdict rules are Pactora's (packages/db/src/trust.ts), unchanged: the
+ * The verdict rules are the earlier edition's, unchanged: the
  * score counts settled jobs, and only the escrow writes one, so every review
  * cost a payment; that stops free reviews, not an owner paying itself
  * through agents it funded. So this asks what the score cannot: how many
@@ -46,7 +46,7 @@ export function actionOf(verdict: Verdict): TrustAction {
   return 'block';
 }
 
-/** The verdict and its reasons, from the numbers alone (Pactora's rules, in Pactora's order). */
+/** The verdict and its reasons, from the numbers alone (the earlier edition's rules, in its order). */
 export function verdictOf(m: TrustMetrics): {verdict: Verdict; reasons: string[]} {
   const finished = m.settled + m.failed;
   const pct = (n: number, d: number) => `${Math.round((100 * n) / Math.max(1, d))}%`;

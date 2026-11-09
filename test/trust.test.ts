@@ -1,4 +1,4 @@
-/** The trust verdict rules, pinned: the same as Pactora's, in the same order. */
+/** The trust verdict rules, pinned: the same as the earlier edition's, in the same order. */
 import {describe, expect, it} from 'vitest';
 import {actionOf, incompleteReading, readEvents, verdictOf} from '../src/agents/trust.js';
 

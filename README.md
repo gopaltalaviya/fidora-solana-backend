@@ -5,9 +5,8 @@ payment sits in an on-chain escrow until a judge says the work earned it. A
 failed call is refunded in the same request; a bad answer can be disputed; a
 farmed counterparty is refused before anything is signed.
 
-> **Encode Solana Hackathon 2026 — what existed before.** Fidora is the
-> Solana edition of a protocol first built on Monad (AgentX v3) and NEAR
-> (Pactora). Reused here, unchanged, from Pactora (NEAR): the model layer in
+> **Encode Solana Hackathon 2026 — what existed before.** Written by the
+> author before the hackathon and reused here unchanged: the model layer in
 > `src/models/` (providers, cached replay, the tool-less judge, the prompts),
 > the trust-verdict rules, and the worker output schemas. Written during the
 > hackathon:
@@ -136,7 +135,7 @@ can only spend within caps.
 | `src/agents/orchestrator.ts` | Plan, discover on chain, trust gate, select, pay over x402, judge, approve or dispute |
 | `src/agents/trust.ts` | The trust verdict from on-chain events |
 | `src/chain/fidora.ts` | Program client, PDAs, transactions, CAIP-2 network id from the node's genesis hash |
-| `src/models/` | Model providers, cached replay, judge, prompts (from Pactora) |
+| `src/models/` | Model providers, cached replay, judge, prompts (from the earlier edition) |
 | `scripts/demo.ts`, `scripts/local-up.ts` | The demo, and the one-command local run |
 | `scripts/x402-smoke.ts` | The scheme alone, end to end, through `@x402/express` and `@x402/fetch` |
 
@@ -167,8 +166,8 @@ foreign-instruction check, turns the matching test red.
 - **Aurora Intents:** needs an Aurora Client Portal API key and mainnet
   funds (there is no testnet), so it is not integrated.
 - **The web interface is read-only:** it shows agents, jobs, trust verdicts and the event feed from the chain; registering and hiring are done by agents with their own keys, as above.
-- **Agent wallets are keypairs in the agent process here.** Pactora's
-  separate signer service is not ported.
+- **Agent wallets are keypairs in the agent process here.** The earlier
+  edition's separate signer service is not ported.
 
 ## Built with
 

@@ -4,8 +4,8 @@
  *   GET  /agent.json      its card — the agent's on-chain card_uri points here
  *   POST /<capability>    x402-protected: pay with fidora-escrow, get the work
  *
- * The work is produced to a schema by the worker's model (Pactora's worker
- * prompt, unchanged). If the model cannot produce it, the handler answers
+ * The work is produced to a schema by the worker's model (the earlier edition's
+ * worker prompt, unchanged). If the model cannot produce it, the handler answers
  * 500 — and x402's cancel leg has the worker decline on chain, so the
  * payer is refunded in the same request. The worker never holds the
  * client's money: it is in the program's escrow until the client approves.
